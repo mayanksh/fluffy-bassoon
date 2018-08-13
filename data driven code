@@ -1,0 +1,56 @@
+package Poi;
+
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.concurrent.TimeUnit;
+
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.Row;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.firefox.FirefoxDriver;
+
+public class ReadData {
+
+	public  void tc() throws IOException {
+		System.setProperty("webdriver.gecko.driver", "/Users/mayank/Downloads/gecko/geckodriver");
+		WebDriver driver;
+		driver= new FirefoxDriver();
+		driver.manage().timeouts().implicitlyWait(10, TimeUnit.SECONDS);
+		driver.get("https://accounts.google.com/signin/v2/identifier?service=mail&passive=true&rm=false&continue=https%3A%2F%2Fmail.google.com%2Fmail%2F&ss=1&scc=1&ltmpl=default&ltmplcache=2&emr=1&osid=1&flowName=GlifWebSignIn&flowEntry=ServiceLogin");
+		//driver.findElement(By.xpath("")).click();
+		ArrayList<String> username = readExcelData(0);
+		ArrayList<String> password = readExcelData(0);
+		for (int i =0; i<username.size(); i++) {
+			driver.findElement(By.id("identifierId")).clear();
+			driver.findElement(By.id("identifierId")).sendKeys(username.get(i));
+			
+		}
+
+	}
+	
+	public ArrayList<String> readExcelData(int colNo) throws IOException {
+		FileInputStream fis = new FileInputStream("/Users/mayank/Downloads/Workbook1.xls");
+		HSSFWorkbook wb = new HSSFWorkbook(fis);
+HSSFSheet s = wb.getSheet("TestcaseSheet1");
+Iterator<Row> rowIterator = s.iterator();
+rowIterator.next();
+ArrayList<String> list = new ArrayList<String>();
+
+while(rowIterator.hasNext()) {
+	
+
+	list.add(rowIterator.next().getCell(colNo).getStringCellValue());
+	}
+	System.out.println("LIST " +list);
+	return list;
+
+}
+public static void main(String args[]) throws IOException {
+	ReadData data = new ReadData();
+	data.tc();
+}
+}
